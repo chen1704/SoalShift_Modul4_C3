@@ -90,6 +90,7 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 		system(command);
 		system("notify-send \"Pesan Error: \" \"Terjadi Kesalahan! File berisi konten berbahaya.\" ");
 		system("mkdir /home/chen1704/Documents/rahasia");
+		system("mv /home/chen1704/Documents/*.ditandai /home/chen1704/Documents/rahasia");
 		
 	}
 	else{
