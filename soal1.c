@@ -71,9 +71,7 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	int res = 0;
   	int fd = 0 ;
 
-	char eks[10];	
-	int panjang = strlen(fpath);
-	int m=0;
+	char ext;	
 	int panjang = strlen(fpath)-1;
 	ext=fpath[panjang];
 
