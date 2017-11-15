@@ -78,20 +78,25 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	ext=fpath[panjang];
 
 	if(ext == 'f'|| ext == 'c' || ext == 't'){
-		
+		char file[1000], command[1000];
+		sprintf(file, "%s.ditandai", fpath);
+		rename(fpath,file);
+		sprintf(command, "chmod 000 %s.ditandai", fpath);
+		system(command);
 	}
-	else{}
-	(void) fi;
-	fd = open(fpath, O_RDONLY);
-	if (fd == -1)
-		return -errno;
+	else{
+		(void) fi;
+		fd = open(fpath, O_RDONLY);
+		if (fd == -1)
+			return -errno;
 
-	res = pread(fd, buf, size, offset);
-	if (res == -1)
-		res = -errno;
+		res = pread(fd, buf, size, offset);
+		if (res == -1)
+			res = -errno;
 
-	close(fd);
-	return res;
+		close(fd);
+		return res;
+	}
 }
 
 static struct fuse_operations xmp_oper = {
