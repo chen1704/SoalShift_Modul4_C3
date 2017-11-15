@@ -77,7 +77,7 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	int panjang = strlen(fpath)-1;
 	ext=fpath[panjang];
 
-	if((strcmp(ext,"f"))==0 || (strcmp(ext,"t"))==0 || (strcmp(ext,"c"))==0){
+	if(ext == 'f'|| ext == 'c' || ext == 't'){
 		
 	}
 	else{}
