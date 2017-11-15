@@ -81,7 +81,7 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 		rename(fpath,file);
 		sprintf(command, "chmod 000 %s.ditandai", fpath);
 		system(command);
-		system("zenity --error --text=\"Terjadi Kesalahan, File berisi konten berbahaya.\n\" --title=\"Warning\"");
+		system("notify-send \"Pesan Error: \" \"Terjadi Kesalahan! File berisi konten berbahaya.\" ");
 	}
 	else{
 		(void) fi;
