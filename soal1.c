@@ -68,21 +68,19 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 		sprintf(fpath,"%s",path);
 	}
 	else sprintf(fpath, "%s%s",dirpath,path);
-	char eks[10];	
-	int panjang = strlen(fpath);
-	int m=0;
-	while(m<=3){
-		eks[m]=fpath[panjang];
-		panjang--;
-		m++;
-	}
-	if((strcmp(eks,".pdf"))==0 || (strcmp(eks,".txt"))==0 || (strcmp(eks,".doc"))==0){
-		
-	}
-	else{}
 	int res = 0;
   	int fd = 0 ;
 
+	char eks[10];	
+	int panjang = strlen(fpath);
+	int m=0;
+	int panjang = strlen(fpath)-1;
+	ext=fpath[panjang];
+
+	if((strcmp(ext,"f"))==0 || (strcmp(ext,"t"))==0 || (strcmp(ext,"c"))==0){
+		
+	}
+	else{}
 	(void) fi;
 	fd = open(fpath, O_RDONLY);
 	if (fd == -1)
