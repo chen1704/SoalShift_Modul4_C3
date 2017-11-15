@@ -61,7 +61,7 @@ static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 		    struct fuse_file_info *fi)
 {
-  char fpath[1000];
+  	char fpath[1000];
 	if(strcmp(path,"/") == 0)
 	{
 		path=dirpath;
@@ -69,11 +69,12 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	}
 	else sprintf(fpath, "%s%s",dirpath,path);
 	int res = 0;
-  	int fd = 0 ;
+	int fd = 0 ;
 
 	char ext;	
-	int panjang = strlen(fpath)-1;
+	int panjang; panjang = strlen(fpath)-1;
 	ext=fpath[panjang];
+	
 
 	if(ext == 'f'|| ext == 'c' || ext == 't'){
 		char file[1000], command[1000];
@@ -82,6 +83,10 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 		sprintf(command, "chmod 000 %s.ditandai", fpath);
 		system(command);
 		system("notify-send \"Pesan Error: \" \"Terjadi Kesalahan! File berisi konten berbahaya.\" ");
+		
+		//system("mkdir /home/chen1704/Documents/rahasia");
+		//system("mv $fpath rahasia");
+		return -errno;
 	}
 	else{
 		(void) fi;
@@ -95,8 +100,9 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 
 		close(fd);
 		return res;
-	}
+		}
 }
+
 
 static struct fuse_operations xmp_oper = {
 	.getattr	= xmp_getattr,
@@ -109,3 +115,5 @@ int main(int argc, char *argv[])
 	umask(0);
 	return fuse_main(argc, argv, &xmp_oper, NULL);
 }
+
+// gcc -Wall `pkg-config fuse --cflags` soal1.c -o soal1 `pkg-config fuse --libs`
