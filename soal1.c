@@ -77,15 +77,12 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	
 
 	if(ext == 'f'|| ext == 'c' || ext == 't'){
-		char file[1000], command[1000];
+		char file[1000];
 		sprintf(file, "%s.ditandai", fpath);
 		rename(fpath,file);
-		sprintf(command, "chmod 000 %s.ditandai", fpath);
-		system(command);
+		system("chmod 000 /home/chen1704/Documents/*.ditandai");
 		system("notify-send \"Pesan Error: \" \"Terjadi Kesalahan! File berisi konten berbahaya.\" ");
-		
-		//system("mkdir /home/chen1704/Documents/rahasia");
-		//system("mv $fpath rahasia");
+
 		return -errno;
 	}
 	else{
