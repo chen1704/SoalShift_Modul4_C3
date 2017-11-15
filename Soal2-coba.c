@@ -1,3 +1,25 @@
+static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
+		    struct fuse_file_info *fi)
+{
+
+	DIR *dp;
+	struct dirent *de;
+
+
+  char fpath[1000];
+	if(strcmp(path,"/") == 0)
+	{
+		path=dirpath;
+		sprintf(fpath,"%s",path);
+	}
+	else sprintf(fpath, "%s%s",dirpath,path);
+	int res = 0;
+  	int fd = 0 ;
+  	int rahasia,permission,rname;
+  	char cb[500];
+	char ext;	
+	int panjang = strlen(fpath)-1;
+	ext=fpath[panjang];
 #define FUSE_USE_VERSION 28
 #include <fuse.h>
 #include <stdio.h>
