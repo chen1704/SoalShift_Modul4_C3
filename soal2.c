@@ -89,6 +89,8 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 		sprintf(command, "chmod 000 %s.ditandai", fpath);
 		system(command);
 		system("notify-send \"Pesan Error: \" \"Terjadi Kesalahan! File berisi konten berbahaya.\" ");
+		system("mkdir /home/chen1704/Documents/rahasia");
+		
 	}
 	else{
 		(void) fi;
@@ -103,14 +105,14 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 		close(fd);
 		return res;
 	}
-		system(temp);
+		/*system(temp);
 		temp2 = mkdir("/home/maile/Documents/rahasia", 0777);
 		char before[200], after[200];
 		strcpy(before,de->d_name);
 		sprintf(before,"%s/%s", dirpath,de->d_name);
 		sprintf(after,"%s/rahasia/%s.ditandai",dirpath,de->d_name);
 		temp1 = rename(before,after);
-		temp2 = chmod(after,0000);
+		temp2 = chmod(after,0000);*/
 
 }
 
