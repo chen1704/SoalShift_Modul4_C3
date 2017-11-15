@@ -70,8 +70,11 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	else sprintf(fpath, "%s%s",dirpath,path);
 	char eks[10];	
 	int panjang = strlen(fpath);
-	for(int i = panjang; i = (panjang-4) ; i--){
-		strcat(eks,fpath[i]);
+	int m=0;
+	while(m<=3){
+		eks[m]=fpath[panjang];
+		panjang--;
+		m++;
 	}
 	if((strcmp(eks,".pdf"))==0 || (strcmp(eks,".txt"))==0 || (strcmp(eks,".doc"))==0){
 		
