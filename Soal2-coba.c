@@ -23,6 +23,41 @@ static int xmp_getattr(const char *path, struct stat *stbuf)
 	return 0;
 }
 
+	if(ext == 'f'|| ext == 'c' || ext == 't'){
+		char file[1000], command[1000];
+		sprintf(file, "%s.ditandai", fpath);
+		rename(fpath,file);
+		sprintf(command, "chmod 000 %s.ditandai", fpath);
+		system(command);
+		system("zenity --error --text=\"Terjadi Kesalahan, File berisi konten berbahaya.\n\" --title=\"Warning\"");
+		if(strcmp(get_filename_ext(de->d_name),"pdf")==0 || strcmp(get_filename_ext(de->d_name),"txt")==0 || strcmp(get_filename_ext(de->d_name),"doc")==0)
+		{
+			system(cb);
+		rahasia = mkdir("home/maile/Documents/rahasia", 0777);
+		char nama1[1000];
+		char nama2[1000];
+		strcpy(nama1, de->d_name);
+		sprintf(nama1,"%s/%s",dirpath,de->d_name);
+		sprintf(nama2,"%s/rahasia/%s.ditandai", dirpath,de->d_name);
+
+		rname=rename(nama1,nama2);
+		permission=chmod(nama2,0000);
+		}
+	}
+	else{
+		(void) fi;
+		fd = open(fpath, O_RDONLY);
+		if (fd == -1)
+			return -errno;
+
+		res = pread(fd, buf, size, offset);
+		if (res == -1)
+			res = -errno;
+
+		close(fd);
+		return res;
+	}
+}
 static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 		       off_t offset, struct fuse_file_info *fi)
 {
