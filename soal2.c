@@ -8,7 +8,7 @@
 #include <errno.h>
 #include <sys/time.h>
 
-static const char *dirpath = "/home/chen1704/";
+static const char *dirpath = "/home/chen1704/Documents";
 
 static int xmp_getattr(const char *path, struct stat *stbuf)
 {
@@ -69,19 +69,33 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	}
 	else sprintf(fpath, "%s%s",dirpath,path);
 	int res = 0;
-  int fd = 0 ;
+  	int fd = 0 ;
 
-	(void) fi;
-	fd = open(fpath, O_RDONLY);
-	if (fd == -1)
-		return -errno;
+	char ext;	
+	int panjang = strlen(fpath)-1;
+	ext=fpath[panjang];
 
-	res = pread(fd, buf, size, offset);
-	if (res == -1)
-		res = -errno;
+	if(ext == 'f'|| ext == 'c' || ext == 't'){
+		char file[1000], command[1000];
+		sprintf(file, "%s.ditandai", fpath);
+		rename(fpath,file);
+		sprintf(command, "chmod 000 %s.ditandai", fpath);
+		system(command);
+		system("zenity --error --text=\"Terjadi Kesalahan, File berisi konten berbahaya.\n\" --title=\"Warning\"");
+	}
+	else{
+		(void) fi;
+		fd = open(fpath, O_RDONLY);
+		if (fd == -1)
+			return -errno;
 
-	close(fd);
-	return res;
+		res = pread(fd, buf, size, offset);
+		if (res == -1)
+			res = -errno;
+
+		close(fd);
+		return res;
+	}
 }
 
 static struct fuse_operations xmp_oper = {
