@@ -68,8 +68,13 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 		sprintf(fpath,"%s",path);
 	}
 	else sprintf(fpath, "%s%s",dirpath,path);
+	char eks[10];	
+	int panjang = strlen(fpath);
+	for(int i = panjang; i = (panjang-4) ; i--){
+		strcat(eks,fpath[i]);
+	}
 	int res = 0;
-  int fd = 0 ;
+  	int fd = 0 ;
 
 	(void) fi;
 	fd = open(fpath, O_RDONLY);
@@ -82,19 +87,6 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 
 	close(fd);
 	return res;
-}
-
-
-static int xmp_open(const char *path, struct fuse_file_info *fi)
-{
-	int res;
-
-	res = open(path, fi->flags);
-	if (res == -1)
-		return -errno;
-
-	close(res);
-	return 0;
 }
 
 static struct fuse_operations xmp_oper = {
