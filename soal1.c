@@ -73,6 +73,10 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	for(int i = panjang; i = (panjang-4) ; i--){
 		strcat(eks,fpath[i]);
 	}
+	if((strcmp(eks,".pdf"))==0 || (strcmp(eks,".txt"))==0 || (strcmp(eks,".doc"))==0){
+		
+	}
+	else{}
 	int res = 0;
   	int fd = 0 ;
 
