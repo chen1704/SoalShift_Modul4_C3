@@ -83,6 +83,12 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	else sprintf(fpath, "%s%s",dirpath,path);
 	int res = 0;
   	int fd = 0 ;
+	int res = 0;
+  	int fd = 0 ;
+	char ext[20];
+	int panjang;
+	panjang=strlen(fpath)-1;	
+	strcpy(ext,fpath+panjang-4);
 	
 	(void) fi;
 	fd = open(fpath, O_RDONLY);
