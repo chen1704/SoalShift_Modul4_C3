@@ -10,6 +10,7 @@
 
 static const char *dirpath = "/home/chen1704/Downloads";
 
+
 static int xmp_getattr(const char *path, struct stat *stbuf)
 {
   int res;
@@ -23,12 +24,11 @@ static int xmp_getattr(const char *path, struct stat *stbuf)
 	return 0;
 }
 
-
 static int xmp_chmod(const char *path, mode_t mode)
 {
 	int res;
 	char fpath[1000];
-	sprintf(fpath, "%s%s" , dirpath,path);
+	sprintf(fpath, "%s%s", dirpath,path);
 	res = chmod(fpath, mode);
 	if (res == -1)
 		return -errno;
@@ -85,7 +85,7 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
   int fd = 0 ;
 
 	(void) fi;
-	fd = open(fpath, O_RDWR);
+	fd = open(fpath, O_RDONLY);
 	if (fd == -1)
 		return -errno;
 
@@ -95,19 +95,6 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 
 	close(fd);
 	return res;
-}
-
-static int xmp_rename(const char *from, const char *to)
-{
-	char fpath[1000];
-	sprintf(fpath, "%s%s", dirpath,path);
-	int res;
-
-	res = rename(from, to);
-	if (res == -1)
-		return -errno;
-
-	return 0;
 }
 
 static int xmp_write(const char *path, const char *buf, size_t size,
@@ -130,26 +117,35 @@ static int xmp_write(const char *path, const char *buf, size_t size,
 	return res;
 }
 
-static int xmp_mknod(const char *path, mode_t mode, dev_t rdev)
+static int xmp_rename(const char *from, const char *to)
 {
 	int res;
-	char fpath[1000];
-	sprintf(fpath,"%s%s", dirpath,fpath);
-	res=mknod(fpath,mode,rdev);
+	res = rename(from, to);
 	if (res == -1)
 		return -errno;
 
 	return 0;
 }
 
+static int xmp_mknod(const char *path, mode_t mode, dev_t rdev)
+{
+    	int res;
+ 	char fpath[1000];
+ 	sprintf(fpath,"%s%s", dirpath, path);
+    	res = mknod(fpath, mode, rdev);
+    	if(res == -1)
+        	return -errno;
+	return 0;
+}
+
 static struct fuse_operations xmp_oper = {
 	.getattr	= xmp_getattr,
+	.chmod 		= xmp_chmod,
 	.readdir	= xmp_readdir,
 	.read		= xmp_read,
-	.chmod 		= xmp_chmod,
-	.mknod 		= xmp_mknod,
-	.rename 	= xmp_rename,
 	.write		= xmp_write,
+	.rename 	= xmp_rename,
+	.mknod		= xmp_mknod,
 };
 
 int main(int argc, char *argv[])
