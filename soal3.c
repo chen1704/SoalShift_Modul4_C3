@@ -107,6 +107,25 @@ static int xmp_rename(const char *from, const char *to)
 	return 0;
 }
 
+static int xmp_write(const char *path, const char *buf, size_t size,
+		     off_t offset, struct fuse_file_info *fi)
+{
+	int fd;
+	int res;
+
+	(void) fi;
+	fd = open(path, O_WRONLY);
+	if (fd == -1)
+		return -errno;
+
+	res = pwrite(fd, buf, size, offset);
+	if (res == -1)
+		res = -errno;
+
+	close(fd);
+	return res;
+}
+
 static int xmp_mknod(const char *path, mode_t mode, dev_t rdev)
 {
 	int res;
@@ -134,6 +153,7 @@ static struct fuse_operations xmp_oper = {
 	.chmod 		= xmp_chmod,
 	.mknod 		= xmp_mknod,
 	.rename 	= xmp_rename,
+	.write 		= xmp_write,
 };
 
 int main(int argc, char *argv[])
@@ -143,4 +163,4 @@ int main(int argc, char *argv[])
 }
 
 
-// gcc -Wall `pkg-config fuse --cflags` soal1.c -o soal1 `pkg-config fuse --libs`
+// gcc -Wall `pkg-config fuse --cflags` soal3.c -o soal3 `pkg-config fuse --libs`
