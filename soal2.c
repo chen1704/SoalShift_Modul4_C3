@@ -71,12 +71,11 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	int res = 0;
 	int fd = 0 ;
 
-	char ext;	
+	char ext[20];	
 	int panjang; panjang = strlen(fpath)-1;
-	ext=fpath[panjang];
-	
+	strcpy(ext,fpath+panjang-3);
 
-	if(ext == 'f'|| ext == 'c' || ext == 't'){
+	if(strcmp(ext,".pdf")== 0 || strcmp(ext,".doc")== 0 || strcmp(ext,".txt")== 0){
 		char file[1000];
 		sprintf(file, "%s.ditandai", fpath);
 		rename(fpath,file);
