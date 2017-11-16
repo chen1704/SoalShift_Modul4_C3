@@ -8,8 +8,7 @@
 #include <errno.h>
 #include <sys/time.h>
 
-static const char *dirpath = "/home/chen1704/Downloads";
-
+static const char *dirpath = "/home/maile/Downloads";
 
 static int xmp_getattr(const char *path, struct stat *stbuf)
 {
@@ -24,11 +23,12 @@ static int xmp_getattr(const char *path, struct stat *stbuf)
 	return 0;
 }
 
+
 static int xmp_chmod(const char *path, mode_t mode)
 {
 	int res;
 	char fpath[1000];
-	sprintf(fpath, "%s%s", dirpath,path);
+	sprintf(fpath, "%s%s" , dirpath,path);
 	res = chmod(fpath, mode);
 	if (res == -1)
 		return -errno;
@@ -82,10 +82,14 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	}
 	else sprintf(fpath, "%s%s",dirpath,path);
 	int res = 0;
-  int fd = 0 ;
+  	int fd = 0 ;
+
+  	sprintf(file, "%s", fpath);
+  	system("mv fpath /home/maile/Downloads/simpanan");
+
 
 	(void) fi;
-	fd = open(fpath, O_RDONLY);
+	fd = open(fpath, O_RDWR);
 	if (fd == -1)
 		return -errno;
 
@@ -95,6 +99,19 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 
 	close(fd);
 	return res;
+}
+
+static int xmp_rename(const char *from, const char *to)
+{
+	char fpath[1000];
+	sprintf(fpath, "%s%s", dirpath,path);
+	int res;
+
+	res = rename(from, to);
+	if (res == -1)
+		return -errno;
+
+	return 0;
 }
 
 static int xmp_write(const char *path, const char *buf, size_t size,
@@ -117,35 +134,26 @@ static int xmp_write(const char *path, const char *buf, size_t size,
 	return res;
 }
 
-static int xmp_rename(const char *from, const char *to)
+static int xmp_mknod(const char *path, mode_t mode, dev_t rdev)
 {
 	int res;
-	res = rename(from, to);
+	char fpath[1000];
+	sprintf(fpath,"%s%s", dirpath,fpath);
+	res=mknod(fpath,mode,rdev);
 	if (res == -1)
 		return -errno;
 
 	return 0;
 }
 
-static int xmp_mknod(const char *path, mode_t mode, dev_t rdev)
-{
-    	int res;
- 	char fpath[1000];
- 	sprintf(fpath,"%s%s", dirpath, path);
-    	res = mknod(fpath, mode, rdev);
-    	if(res == -1)
-        	return -errno;
-	return 0;
-}
-
 static struct fuse_operations xmp_oper = {
 	.getattr	= xmp_getattr,
-	.chmod 		= xmp_chmod,
 	.readdir	= xmp_readdir,
 	.read		= xmp_read,
-	.write		= xmp_write,
+	.chmod 		= xmp_chmod,
+	.mknod 		= xmp_mknod,
 	.rename 	= xmp_rename,
-	.mknod		= xmp_mknod,
+	.write		= xmp_write,
 };
 
 int main(int argc, char *argv[])
