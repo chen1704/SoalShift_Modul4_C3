@@ -8,7 +8,8 @@
 #include <errno.h>
 #include <sys/time.h>
 
-static const char *dirpath = "/home/chen1704/";
+static const char *dirpath = "/home/chen1704/Downloads";
+
 
 static int xmp_getattr(const char *path, struct stat *stbuf)
 {
@@ -17,6 +18,18 @@ static int xmp_getattr(const char *path, struct stat *stbuf)
 	sprintf(fpath,"%s%s",dirpath,path);
 	res = lstat(fpath, stbuf);
 
+	if (res == -1)
+		return -errno;
+
+	return 0;
+}
+
+static int xmp_chmod(const char *path, mode_t mode)
+{
+	int res;
+	char fpath[1000];
+	sprintf(fpath, "%s%s", dirpath,path);
+	res = chmod(fpath, mode);
 	if (res == -1)
 		return -errno;
 
@@ -84,10 +97,59 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	return res;
 }
 
+static int xmp_write(const char *path, const char *buf, size_t size,
+		     off_t offset, struct fuse_file_info *fi)
+{
+	int fd;
+	int res;
+	char fpath[1000];
+	sprintf(fpath, "%s%s", dirpath,path);
+	(void) fi;
+	fd = open(fpath, O_WRONLY);
+	if (fd == -1)
+		return -errno;
+
+	res = pwrite(fd, buf, size, offset);
+	if (res == -1)
+		res = -errno;
+
+	close(fd);
+	return res;
+}
+
+static int xmp_rename(const char *from, const char *to)
+{
+	int res;
+	char to2[256],from2[256];
+	//system("mkdir -p /home/chen1704/Downloads/simpanan");
+	sprintf(to2,"%s%s",dirpath,to);		
+	sprintf(from2,"%s%s",dirpath,from);
+	res = rename(from2, to2);
+	if (res == -1)
+		return -errno;
+
+	return 0;
+}
+
+static int xmp_mknod(const char *path, mode_t mode, dev_t rdev)
+{
+    	int res;
+ 	char fpath[1000];
+ 	sprintf(fpath,"%s%s", dirpath, path);
+    	res = mknod(fpath, mode, rdev);
+    	if(res == -1)
+        	return -errno;
+	return 0;
+}
+
 static struct fuse_operations xmp_oper = {
 	.getattr	= xmp_getattr,
+	.chmod 		= xmp_chmod,
 	.readdir	= xmp_readdir,
 	.read		= xmp_read,
+	.write		= xmp_write,
+	.rename 	= xmp_rename,
+	.mknod		= xmp_mknod,
 };
 
 int main(int argc, char *argv[])
@@ -95,3 +157,6 @@ int main(int argc, char *argv[])
 	umask(0);
 	return fuse_main(argc, argv, &xmp_oper, NULL);
 }
+
+
+// gcc -Wall `pkg-config fuse --cflags` soal4.c -o soal4 `pkg-config fuse --libs`
