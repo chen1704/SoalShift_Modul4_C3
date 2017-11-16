@@ -27,8 +27,9 @@ static int xmp_getattr(const char *path, struct stat *stbuf)
 static int xmp_chmod(const char *path, mode_t mode)
 {
 	int res;
-
-	res = chmod(path, mode);
+	char fpath[1000];
+	sprintf(fpath, "%s%s" , dirpath,path);
+	res = chmod(fpath, mode);
 	if (res == -1)
 		return -errno;
 
@@ -98,6 +99,8 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 
 static int xmp_rename(const char *from, const char *to)
 {
+	char fpath[1000];
+	sprintf(fpath, "%s%s", dirpath,path);
 	int res;
 
 	res = rename(from, to);
@@ -112,9 +115,10 @@ static int xmp_write(const char *path, const char *buf, size_t size,
 {
 	int fd;
 	int res;
-
+	char fpath[1000];
+	sprintf(fpath, "%s%s", dirpath,path);
 	(void) fi;
-	fd = open(path, O_WRONLY);
+	fd = open(fpath, O_WRONLY);
 	if (fd == -1)
 		return -errno;
 
@@ -129,17 +133,9 @@ static int xmp_write(const char *path, const char *buf, size_t size,
 static int xmp_mknod(const char *path, mode_t mode, dev_t rdev)
 {
 	int res;
-
-	/* On Linux this could just be 'mknod(path, mode, rdev)' but this
-	   is more portable */
-	if (S_ISREG(mode)) {
-		res = open(path, O_CREAT | O_EXCL | O_WRONLY, mode);
-		if (res >= 0)
-			res = close(res);
-	} else if (S_ISFIFO(mode))
-		res = mkfifo(path, mode);
-	else
-		res = mknod(path, mode, rdev);
+	char fpath[1000];
+	sprintf(fpath,"%s%s", dirpath,fpath);
+	res=mknod(fpath,mode,rdev);
 	if (res == -1)
 		return -errno;
 
@@ -153,7 +149,7 @@ static struct fuse_operations xmp_oper = {
 	.chmod 		= xmp_chmod,
 	.mknod 		= xmp_mknod,
 	.rename 	= xmp_rename,
-	.write 		= xmp_write,
+	.write		= xmp_write,
 };
 
 int main(int argc, char *argv[])
