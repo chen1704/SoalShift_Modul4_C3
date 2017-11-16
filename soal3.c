@@ -8,7 +8,7 @@
 #include <errno.h>
 #include <sys/time.h>
 
-static const char *dirpath = "/home/chen1704/";
+static const char *dirpath = "/home/chen1704/Downloads";
 
 static int xmp_getattr(const char *path, struct stat *stbuf)
 {
@@ -84,7 +84,7 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
   int fd = 0 ;
 
 	(void) fi;
-	fd = open(fpath, O_RDONLY);
+	fd = open(fpath, O_RDWR);
 	if (fd == -1)
 		return -errno;
 
@@ -96,11 +96,44 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	return res;
 }
 
+static int xmp_rename(const char *from, const char *to)
+{
+	int res;
+
+	res = rename(from, to);
+	if (res == -1)
+		return -errno;
+
+	return 0;
+}
+
+static int xmp_mknod(const char *path, mode_t mode, dev_t rdev)
+{
+	int res;
+
+	/* On Linux this could just be 'mknod(path, mode, rdev)' but this
+	   is more portable */
+	if (S_ISREG(mode)) {
+		res = open(path, O_CREAT | O_EXCL | O_WRONLY, mode);
+		if (res >= 0)
+			res = close(res);
+	} else if (S_ISFIFO(mode))
+		res = mkfifo(path, mode);
+	else
+		res = mknod(path, mode, rdev);
+	if (res == -1)
+		return -errno;
+
+	return 0;
+}
+
 static struct fuse_operations xmp_oper = {
 	.getattr	= xmp_getattr,
 	.readdir	= xmp_readdir,
 	.read		= xmp_read,
 	.chmod 		= xmp_chmod,
+	.mknod 		= xmp_mknod,
+	.rename 	= xmp_rename,
 };
 
 int main(int argc, char *argv[])
@@ -108,3 +141,6 @@ int main(int argc, char *argv[])
 	umask(0);
 	return fuse_main(argc, argv, &xmp_oper, NULL);
 }
+
+
+// gcc -Wall `pkg-config fuse --cflags` soal1.c -o soal1 `pkg-config fuse --libs`
