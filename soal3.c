@@ -23,6 +23,18 @@ static int xmp_getattr(const char *path, struct stat *stbuf)
 	return 0;
 }
 
+
+static int xmp_chmod(const char *path, mode_t mode)
+{
+	int res;
+
+	res = chmod(path, mode);
+	if (res == -1)
+		return -errno;
+
+	return 0;
+}
+
 static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 		       off_t offset, struct fuse_file_info *fi)
 {
@@ -88,6 +100,7 @@ static struct fuse_operations xmp_oper = {
 	.getattr	= xmp_getattr,
 	.readdir	= xmp_readdir,
 	.read		= xmp_read,
+	.chmod 		= xmp_chmod,
 };
 
 int main(int argc, char *argv[])
