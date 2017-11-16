@@ -84,19 +84,6 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	int res = 0;
   	int fd = 0 ;
 	
-	char ext[20];	
-	char file[1000];
-	sprintf(file, "%s.copy", fpath);
-	system("mkdir /home/chen1704/Downloads/simpanan");
-	system("mv /home/chen1704/Downloads/*.copy /home/chen1704/Downloads/simpanan");	
-	system("chmod 000 /home/chen1704/Documents/*.copy");
-	rename(fpath,file);
-	int panjang; panjang = strlen(fpath)-1;
-	strcpy(ext,fpath+panjang-3);
-
-	if(strcmp(ext,".copy")==0){
-		system("notify-send \"Pesan Error: \" \"Terjadi Kesalahan! File berisi konten berbahaya.\" ");
-	}
 	(void) fi;
 	fd = open(fpath, O_RDONLY);
 	if (fd == -1)
@@ -135,7 +122,7 @@ static int xmp_rename(const char *from, const char *to)
 	int res;
 	char to2[256],from2[256];
 	system("mkdir -p /home/chen1704/Downloads/simpanan");
-	sprintf(to2,"%s/simpanan/%s",dirpath,to);		
+	sprintf(to2,"%s/simpanan/%s.copy",dirpath,to);		
 	sprintf(from2,"%s%s",dirpath,from);
 	res = rename(from2, to2);
 	if (res == -1)
