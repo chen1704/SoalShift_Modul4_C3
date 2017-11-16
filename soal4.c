@@ -83,24 +83,27 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	else sprintf(fpath, "%s%s",dirpath,path);
 	int res = 0;
   	int fd = 0 ;
-	int res = 0;
-  	int fd = 0 ;
 	char ext[20];
 	int panjang;
 	panjang=strlen(fpath)-1;	
 	strcpy(ext,fpath+panjang-4);
-	
-	(void) fi;
-	fd = open(fpath, O_RDONLY);
-	if (fd == -1)
+	if(strcmp(ext,".copy")==0){
+		system("notify-send \"Pesan Error: \" \"File yang anda buka adalah file hasil salinan. File tidak bisa diubah maupun disalin kembali!\" ");
 		return -errno;
+	}
+	else{
+		(void) fi;
+		fd = open(fpath, O_RDONLY);
+		if (fd == -1)
+			return -errno;
 
-	res = pread(fd, buf, size, offset);
-	if (res == -1)
-		res = -errno;
+		res = pread(fd, buf, size, offset);
+		if (res == -1)
+			res = -errno;
 
-	close(fd);
-	return res;
+		close(fd);
+		return res;
+	}
 }
 
 static int xmp_write(const char *path, const char *buf, size_t size,
@@ -131,6 +134,7 @@ static int xmp_rename(const char *from, const char *to)
 	sprintf(to2,"%s/simpanan/%s.copy",dirpath,to);		
 	sprintf(from2,"%s%s",dirpath,from);
 	res = rename(from2, to2);
+	
 	if (res == -1)
 		return -errno;
 
